@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+
+# Environment files
+.env*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SonarQube
+.sonarqube/
+.scannerwork/
+
+# Configuration files
+*.config.js
+*.config.ts
+.eslintrc.js
+
+# Generated files
+*.d.ts

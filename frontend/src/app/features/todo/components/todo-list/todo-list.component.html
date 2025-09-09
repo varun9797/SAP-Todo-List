@@ -1,125 +1,14 @@
-<div class="todo-container">
-  <header class="header">
-    <h1>Todo Management</h1>
-    <p class="subtitle">Organize your tasks efficiently</p>
-  </header>
-
-  <!-- Add Todo Form -->
-  <div class="add-todo-form">
-    <h2>Add New Todo</h2>
-    <form (ngSubmit)="addTodo()" class="form">
-      <div class="form-group">
-        <label for="title">Title *</label>
-        <input 
-          id="title"
-          type="text" 
-          [(ngModel)]="newTodo.title" 
-          name="title"
-          placeholder="Enter todo title"
-          required
-          class="form-control"
-        />
-      </div>
-      
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea 
-          id="description"
-          [(ngModel)]="newTodo.description" 
-          name="description"
-          placeholder="Enter todo description (optional)"
-          rows="3"
-          class="form-control"
-        ></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label for="status">Status</label>
-        <select 
-          id="status"
-          [(ngModel)]="newTodo.status" 
-          name="status"
-          class="form-control"
-        >
-          @for (option of TODO_STATUS_OPTIONS; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-          }
-        </select>
-      </div>
-      
-      <button 
-        type="submit" 
-        [disabled]="!newTodo.title.trim() || isLoading()"
-        class="btn btn-primary"
-      >
-        {{ isLoading() ? 'Adding...' : 'Add Todo' }}
-      </button>
-    </form>
+<!-- Todo List -->
+<div class="todo-list">
+  @if (isLoading()) {
+  <div class="loading">Loading todos...</div>
+  } @else if (todos().length === 0) {
+  <div class="empty-state">
+    <p>No todos to display.</p>
   </div>
-
-  <!-- Filter and Stats -->
-  <div class="controls">
-    <div class="filters">
-      <label for="filter">Filter by status:</label>
-      <select 
-        id="filter"
-        [(ngModel)]="filterStatus" 
-        (ngModelChange)="onFilterChange()"
-        class="form-control filter-select"
-      >
-        @for (option of FILTER_OPTIONS; track option.value) {
-          <option [value]="option.value">{{ option.label }}</option>
-        }
-      </select>
-    </div>
-    
-    <div class="stats">
-      <span class="stat">Total: {{ todos().length }}</span>
-      <span class="stat">Pending: {{ pendingCount() }}</span>
-      <span class="stat">In Progress: {{ inProgressCount() }}</span>
-      <span class="stat">Completed: {{ completedCount() }}</span>
-    </div>
-  </div>
-
-  <!-- Error Message -->
-  @if (error()) {
-    <div class="error-message">
-      {{ error() }}
-      <button (click)="clearError()" class="close-btn">&times;</button>
-    </div>
+  } @else {
+  @for (todo of todos(); track todo.id) {
+  <app-todo-item [todo]="todo" />
   }
-
-  <!-- Success Message -->
-  @if (successMessage()) {
-    <div class="success-message">
-      {{ successMessage() }}
-      <button (click)="clearSuccess()" class="close-btn">&times;</button>
-    </div>
   }
-
-  <!-- Todo List -->
-  <div class="todo-list">
-    @if (isLoading()) {
-      <div class="loading">Loading todos...</div>
-    } @else if (filteredTodos().length === 0) {
-      <div class="empty-state">
-        @if (todos().length === 0) {
-          <p>No todos yet. Create your first todo above!</p>
-        } @else {
-          <p>No todos match the current filter.</p>
-        }
-      </div>
-    } @else {
-      @for (todo of filteredTodos(); track todo.id) {
-        <app-todo-item 
-          [todo]="todo"
-          (todoUpdated)="onTodoUpdated($event)"
-          (todoDeleted)="onTodoDeleted($event)"
-          (subtaskAdded)="onSubtaskAdded($event.todoId, $event.subtask)"
-          (subtaskUpdated)="onSubtaskUpdated($event.todoId, $event.subtaskId, $event.updates)"
-          (subtaskDeleted)="onSubtaskDeleted($event.todoId, $event.subtaskId)"
-        />
-      }
-    }
-  </div>
 </div>

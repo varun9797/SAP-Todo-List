@@ -19,7 +19,7 @@ export class ResponseUtil {
     return res.status(statusCode).json({
       success: true,
       data,
-      message
+      message,
     });
   }
 
@@ -33,17 +33,14 @@ export class ResponseUtil {
   ): Response<ApiResponse> {
     return res.status(statusCode).json({
       success: false,
-      error
+      error,
     });
   }
 
   /**
    * Send a not found response
    */
-  static notFound(
-    res: Response<ApiResponse>,
-    message: string
-  ): Response<ApiResponse> {
+  static notFound(res: Response<ApiResponse>, message: string): Response<ApiResponse> {
     return ResponseUtil.error(res, message, HTTP_STATUS.NOT_FOUND);
   }
 
@@ -61,20 +58,14 @@ export class ResponseUtil {
   /**
    * Send a bad request response
    */
-  static badRequest(
-    res: Response<ApiResponse>,
-    message: string
-  ): Response<ApiResponse> {
+  static badRequest(res: Response<ApiResponse>, message: string): Response<ApiResponse> {
     return ResponseUtil.error(res, message, HTTP_STATUS.BAD_REQUEST);
   }
 
   /**
    * Send an internal server error response
    */
-  static internalServerError(
-    res: Response<ApiResponse>,
-    message: string
-  ): Response<ApiResponse> {
+  static internalServerError(res: Response<ApiResponse>, message: string): Response<ApiResponse> {
     return ResponseUtil.error(res, message, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 }

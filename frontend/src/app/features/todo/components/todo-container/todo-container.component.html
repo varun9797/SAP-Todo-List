@@ -1,0 +1,15 @@
+<div class="todo-container">
+    <header class="header">
+        <h1>Todo Management</h1>
+        <p class="subtitle">Organize your tasks efficiently</p>
+    </header>
+
+    <app-todo-form></app-todo-form>
+    <app-todo-filter></app-todo-filter>
+    <app-todo-list></app-todo-list>
+</div>
+
+<!-- Global notification component - placed outside container for proper z-index -->
+<app-notification [notification]="currentNotification()" (confirmed)="notificationService.onConfirmed()"
+    (cancelled)="notificationService.onCancelled()" (closed)="notificationService.hide()">
+</app-notification>

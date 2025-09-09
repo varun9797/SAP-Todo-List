@@ -3,7 +3,6 @@ import { TodoModel } from './todoModel';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse, CreateTodoRequest, UpdateTodoRequest, CreateSubTaskRequest, UpdateSubTaskRequest } from '../../../types';
 import {
-  HTTP_STATUS,
   SUCCESS_MESSAGES,
   ERROR_MESSAGES,
   LOG_MESSAGES,

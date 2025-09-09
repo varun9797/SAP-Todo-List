@@ -1,0 +1,37 @@
+<div class="notification-overlay" *ngIf="isVisible()" (click)="close()" (keydown.escape)="close()" tabindex="0"
+  role="dialog" aria-modal="true" [attr.aria-label]="notification()?.title || notification()?.message">
+
+  <div class="notification-modal" [class]="getNotificationClass()" role="alertdialog">
+    <div class="notification-header">
+      <div class="notification-icon">
+        <span [class]="getIconClass()"></span>
+      </div>
+      <div class="notification-content">
+        <h4 class="notification-title" *ngIf="notification()?.title">
+          {{ notification()?.title }}
+        </h4>
+        <p class="notification-message">
+          {{ notification()?.message }}
+        </p>
+      </div>
+      <button class="close-button" (click)="close()" type="button" aria-label="Close notification">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="notification-actions" *ngIf="notification()?.type === 'confirmation'">
+      <app-button variant="secondary" (clicked)="cancel()">
+        {{ notification()?.cancelText || 'Cancel' }}
+      </app-button>
+      <app-button variant="primary" (clicked)="confirm()">
+        {{ notification()?.confirmText || 'Confirm' }}
+      </app-button>
+    </div>
+
+    <div class="notification-actions" *ngIf="notification()?.type !== 'confirmation'">
+      <app-button variant="primary" (clicked)="close()">
+        OK
+      </app-button>
+    </div>
+  </div>
+</div>

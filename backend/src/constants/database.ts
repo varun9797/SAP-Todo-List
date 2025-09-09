@@ -5,7 +5,7 @@
 export const QUERY_OPTIONS = {
   LEAN: { lean: true },
   NEW_AND_LEAN: { new: true, lean: true },
-  NEW: { new: true }
+  NEW: { new: true },
 } as const;
 
 /**
@@ -22,5 +22,5 @@ export const DB_FIELDS = {
   SUBTASK_TITLE: 'subtasks.$.title',
   SUBTASK_COMPLETED: 'subtasks.$.completed',
   CREATED_AT: 'createdAt',
-  UPDATED_AT: 'updatedAt'
+  UPDATED_AT: 'updatedAt',
 } as const;

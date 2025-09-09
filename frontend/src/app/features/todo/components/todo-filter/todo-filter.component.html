@@ -1,0 +1,19 @@
+<!-- Filter and Stats -->
+<div class="controls">
+    <div class="filters">
+        <label for="filter">Filter by status:</label>
+        <select id="filter" [(ngModel)]="filterStatus" (ngModelChange)="onFilterChange()"
+            class="form-control filter-select">
+            @for (option of FILTER_OPTIONS; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+            }
+        </select>
+    </div>
+
+    <div class="stats">
+        <span class="stat">Total: {{ todos().length }}</span>
+        <span class="stat">Pending: {{ counts().pending }}</span>
+        <span class="stat">In Progress: {{ counts().inProgress }}</span>
+        <span class="stat">Completed: {{ counts().completed }}</span>
+    </div>
+</div>

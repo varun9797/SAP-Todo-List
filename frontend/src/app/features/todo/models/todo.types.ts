@@ -19,7 +19,7 @@ export interface Todo {
 export interface CreateTodoRequest {
   title: string;
   description?: string;
-  status?: 'pending' | 'in-progress' | 'completed';
+  status?: 'pending' | 'in-progress' | 'completed'
 }
 
 export interface UpdateTodoRequest {
@@ -37,7 +37,7 @@ export interface UpdateSubTaskRequest {
   completed?: boolean;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;

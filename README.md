@@ -12,6 +12,8 @@ A full-stack todo management application built with Angular (frontend) and Node.
 - 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
 - 🔒 **Secure API**: Backend with comprehensive validation and error handling
 - 🗄️ **Persistent Storage**: MongoDB database for reliable data persistence
+- 🐳 **Docker Ready**: Full containerization with quality checks pipeline
+- 🧪 **Quality Assured**: Integrated linting, testing, and type checking in builds
 
 ## 🏗️ Architecture
 
@@ -315,12 +317,35 @@ This project is licensed under the ISC License.
 **Varun**
 - GitHub: [@varun9797](https://github.com/varun9797)
 
-## 🐛 Known Issues
+## � Additional Documentation
+
+- **[Docker Setup Guide](DOCKER.md)** - Complete Docker containerization guide
+- **[Docker Quality Checks](DOCKER_QUALITY_CHECKS.md)** - Linting and testing in Docker builds
+- **[Backend API Documentation](backend/README.md)** - Backend API endpoints and usage
+- **[Frontend Documentation](frontend/README.md)** - Frontend development guide
+
+## �🐛 Known Issues
 
 - No authentication system implemented yet
-- Test suites need to be added
 - Error logging could be enhanced
 
+## 🧪 Quality Assurance
+
+This project includes comprehensive quality checks:
+- ✅ **TypeScript type checking** - Ensures type safety
+- ✅ **ESLint code quality** - Enforces coding standards
+- ✅ **Jest unit testing** - 102 passing tests
+- ✅ **Docker quality pipeline** - Integrated in build process
+
+Run quality checks:
+```bash
+# Backend quality checks
+cd backend
+npm run validate  # Runs type-check + lint + test
+
+# Test Docker quality pipeline
+./test-docker-build.sh
+```
 
 ---
 

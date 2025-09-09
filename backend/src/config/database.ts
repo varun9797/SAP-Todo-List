@@ -20,15 +20,16 @@ class DatabaseConnection {
     }
 
     try {
-      const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/todoapp';
-      
+      const mongoUri =
+        process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/todoapp';
+
       await mongoose.connect(mongoUri);
-      
+
       this.isConnected = true;
       console.log('✅ Connected to MongoDB successfully');
-      
+
       // Handle connection events
-      mongoose.connection.on('error', (error) => {
+      mongoose.connection.on('error', error => {
         console.error('❌ MongoDB connection error:', error);
         this.isConnected = false;
       });
@@ -42,7 +43,6 @@ class DatabaseConnection {
         console.log('🔄 MongoDB reconnected');
         this.isConnected = true;
       });
-
     } catch (error) {
       console.error('❌ Failed to connect to MongoDB:', error);
       this.isConnected = false;
