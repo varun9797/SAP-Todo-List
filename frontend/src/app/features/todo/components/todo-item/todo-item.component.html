@@ -8,7 +8,7 @@
           rows="2"></textarea>
         <select [(ngModel)]="editForm.status" class="edit-input status-select">
           @for (option of TODO_STATUS_OPTIONS; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
+          <option [value]="option.value">{{ option.label }}</option>
           }
         </select>
       </div>
@@ -73,7 +73,6 @@
 
     <!-- Subtasks List -->
     @if (todo.subtasks.length > 0) {
-    2222
     <div class="subtasks-list">
       @for (subtask of todo.subtasks; track subtask.id) {
       <div class="subtask-item" [class.completed]="subtask.completed">
@@ -90,7 +89,6 @@
           </div>
         </div>
         } @else {
-        1111
         <div class="subtask-content">
           <div class="subtask-main">
             <input type="checkbox" [checked]="subtask.completed"
