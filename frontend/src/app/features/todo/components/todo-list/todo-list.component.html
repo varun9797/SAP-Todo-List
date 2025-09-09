@@ -41,9 +41,9 @@
           name="status"
           class="form-control"
         >
-          <option value="pending">Pending</option>
-          <option value="in-progress">In Progress</option>
-          <option value="completed">Completed</option>
+          @for (option of TODO_STATUS_OPTIONS; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
         </select>
       </div>
       
@@ -67,10 +67,9 @@
         (ngModelChange)="onFilterChange()"
         class="form-control filter-select"
       >
-        <option value="all">All</option>
-        <option value="pending">Pending</option>
-        <option value="in-progress">In Progress</option>
-        <option value="completed">Completed</option>
+        @for (option of FILTER_OPTIONS; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
       </select>
     </div>
     

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Todo, UpdateTodoRequest, CreateSubTaskRequest, UpdateSubTaskRequest } from '../../models/todo.types';
 import { TodoService } from '../../services/todo.service';
+import { TODO_STATUS, TODO_STATUS_LABELS } from '../../constants/todo.constants';
 
 @Component({
   selector: 'app-todo-item',
@@ -13,6 +14,14 @@ import { TodoService } from '../../services/todo.service';
 })
 export class TodoItemComponent {
   private readonly todoService = inject(TodoService);
+
+  // Expose constants to template
+  readonly TODO_STATUS = TODO_STATUS;
+  readonly TODO_STATUS_OPTIONS = [
+    { value: TODO_STATUS.PENDING, label: TODO_STATUS_LABELS[TODO_STATUS.PENDING] },
+    { value: TODO_STATUS.IN_PROGRESS, label: TODO_STATUS_LABELS[TODO_STATUS.IN_PROGRESS] },
+    { value: TODO_STATUS.COMPLETED, label: TODO_STATUS_LABELS[TODO_STATUS.COMPLETED] }
+  ];
 
   @Input({ required: true }) todo!: Todo;
   @Output() todoUpdated = new EventEmitter<Todo>();
@@ -179,9 +188,9 @@ export class TodoItemComponent {
 
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'pending': return 'Pending';
-      case 'in-progress': return 'In Progress';
-      case 'completed': return 'Completed';
+      case TODO_STATUS.PENDING: return TODO_STATUS_LABELS[TODO_STATUS.PENDING];
+      case TODO_STATUS.IN_PROGRESS: return TODO_STATUS_LABELS[TODO_STATUS.IN_PROGRESS];
+      case TODO_STATUS.COMPLETED: return TODO_STATUS_LABELS[TODO_STATUS.COMPLETED];
       default: return status;
     }
   }

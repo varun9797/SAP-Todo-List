@@ -4,6 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { TodoService } from '../../services/todo.service';
 import { Todo, CreateTodoRequest } from '../../models/todo.types';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
+import { 
+  TODO_STATUS, 
+  FilterStatus, 
+  SUCCESS_MESSAGES, 
+  ERROR_MESSAGES, 
+  DEFAULT_TODO,
+  UI_TIMING
+} from '../../constants/todo.constants';
 
 @Component({
   selector: 'app-todo-list',
@@ -15,6 +23,18 @@ import { TodoItemComponent } from '../todo-item/todo-item.component';
 export class TodoListComponent implements OnInit {
   private readonly todoService = inject(TodoService);
   
+  // Expose constants to template
+  readonly TODO_STATUS = TODO_STATUS;
+  readonly TODO_STATUS_OPTIONS = [
+    { value: TODO_STATUS.PENDING, label: 'Pending' },
+    { value: TODO_STATUS.IN_PROGRESS, label: 'In Progress' },
+    { value: TODO_STATUS.COMPLETED, label: 'Completed' }
+  ];
+  readonly FILTER_OPTIONS = [
+    { value: TODO_STATUS.ALL, label: 'All' },
+    ...this.TODO_STATUS_OPTIONS
+  ];
+  
   // Signals
   readonly todos = signal<Todo[]>([]);
   readonly isLoading = signal(false);
@@ -22,34 +42,34 @@ export class TodoListComponent implements OnInit {
   readonly successMessage = signal<string | null>(null);
   
   // Filter
-  filterStatus: 'all' | 'pending' | 'in-progress' | 'completed' = 'all';
+  filterStatus: FilterStatus = TODO_STATUS.ALL;
   
   // Computed values
   readonly filteredTodos = computed(() => {
     const allTodos = this.todos();
-    if (this.filterStatus === 'all') {
+    if (this.filterStatus === TODO_STATUS.ALL) {
       return allTodos;
     }
     return allTodos.filter(todo => todo.status === this.filterStatus);
   });
   
   readonly pendingCount = computed(() => 
-    this.todos().filter(todo => todo.status === 'pending').length
+    this.todos().filter(todo => todo.status === TODO_STATUS.PENDING).length
   );
   
   readonly inProgressCount = computed(() => 
-    this.todos().filter(todo => todo.status === 'in-progress').length
+    this.todos().filter(todo => todo.status === TODO_STATUS.IN_PROGRESS).length
   );
   
   readonly completedCount = computed(() => 
-    this.todos().filter(todo => todo.status === 'completed').length
+    this.todos().filter(todo => todo.status === TODO_STATUS.COMPLETED).length
   );
 
   // Form data
   newTodo: CreateTodoRequest = {
-    title: '',
-    description: '',
-    status: 'pending'
+    title: DEFAULT_TODO.title,
+    description: DEFAULT_TODO.description,
+    status: DEFAULT_TODO.status
   };
 
   ngOnInit() {
@@ -66,7 +86,7 @@ export class TodoListComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (err) => {
-        this.error.set('Failed to load todos. Please try again.');
+        this.error.set(ERROR_MESSAGES.LOAD_TODOS_FAILED);
         this.isLoading.set(false);
         console.error('Error loading todos:', err);
       }
@@ -83,12 +103,12 @@ export class TodoListComponent implements OnInit {
       next: (newTodo) => {
         this.todos.update(todos => [...todos, newTodo]);
         this.resetForm();
-        this.successMessage.set('Todo created successfully!');
+        this.successMessage.set(SUCCESS_MESSAGES.TODO_CREATED);
         this.isLoading.set(false);
-        setTimeout(() => this.clearSuccess(), 3000);
+        setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
       },
       error: (err) => {
-        this.error.set('Failed to create todo. Please try again.');
+        this.error.set(ERROR_MESSAGES.CREATE_TODO_FAILED);
         this.isLoading.set(false);
         console.error('Error creating todo:', err);
       }
@@ -99,14 +119,14 @@ export class TodoListComponent implements OnInit {
     this.todos.update(todos => 
       todos.map(todo => todo.id === updatedTodo.id ? updatedTodo : todo)
     );
-    this.successMessage.set('Todo updated successfully!');
-    setTimeout(() => this.clearSuccess(), 3000);
+    this.successMessage.set(SUCCESS_MESSAGES.TODO_UPDATED);
+    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
   }
 
   onTodoDeleted(todoId: string) {
     this.todos.update(todos => todos.filter(todo => todo.id !== todoId));
-    this.successMessage.set('Todo deleted successfully!');
-    setTimeout(() => this.clearSuccess(), 3000);
+    this.successMessage.set(SUCCESS_MESSAGES.TODO_DELETED);
+    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
   }
 
   onSubtaskAdded(todoId: string, subtask: any) {
@@ -117,8 +137,8 @@ export class TodoListComponent implements OnInit {
           : todo
       )
     );
-    this.successMessage.set('Subtask added successfully!');
-    setTimeout(() => this.clearSuccess(), 3000);
+    this.successMessage.set(SUCCESS_MESSAGES.SUBTASK_ADDED);
+    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
   }
 
   onSubtaskUpdated(todoId: string, subtaskId: string, updates: any) {
@@ -134,8 +154,8 @@ export class TodoListComponent implements OnInit {
           : todo
       )
     );
-    this.successMessage.set('Subtask updated successfully!');
-    setTimeout(() => this.clearSuccess(), 3000);
+    this.successMessage.set(SUCCESS_MESSAGES.SUBTASK_UPDATED);
+    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
   }
 
   onSubtaskDeleted(todoId: string, subtaskId: string) {
@@ -146,8 +166,8 @@ export class TodoListComponent implements OnInit {
           : todo
       )
     );
-    this.successMessage.set('Subtask deleted successfully!');
-    setTimeout(() => this.clearSuccess(), 3000);
+    this.successMessage.set(SUCCESS_MESSAGES.SUBTASK_DELETED);
+    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
   }
 
   onFilterChange() {
@@ -156,9 +176,9 @@ export class TodoListComponent implements OnInit {
 
   resetForm() {
     this.newTodo = {
-      title: '',
-      description: '',
-      status: 'pending'
+      title: DEFAULT_TODO.title,
+      description: DEFAULT_TODO.description,
+      status: DEFAULT_TODO.status
     };
   }
 
