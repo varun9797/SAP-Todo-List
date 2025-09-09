@@ -20,7 +20,7 @@ class DatabaseConnection {
     }
 
     try {
-      const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/todoapp';
+      const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/todoapp';
       
       await mongoose.connect(mongoUri);
       
