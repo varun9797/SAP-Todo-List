@@ -21,10 +21,14 @@ class TodoController {
       title: mongoTodo.title,
       description: mongoTodo.description,
       status: mongoTodo.status,
+      createdAt: mongoTodo.createdAt,
+      updatedAt: mongoTodo.updatedAt,
       subtasks: mongoTodo.subtasks.map((subtask: any) => ({
         id: subtask.id,
         title: subtask.title,
-        completed: subtask.completed
+        completed: subtask.completed,
+        createdAt: subtask.createdAt,
+        updatedAt: subtask.updatedAt
       }))
     };
   }

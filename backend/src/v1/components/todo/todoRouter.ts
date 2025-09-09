@@ -13,7 +13,7 @@ const router = Router();
 
 // Todo routes with validation
 router.get('/', todoController.getAllTodos.bind(todoController));
-router.get('/:id', validateTodoId, todoController.getTodoById.bind(todoController));
+// router.get('/:id', validateTodoId, todoController.getTodoById.bind(todoController));
 router.post('/', validateCreateTodo, todoController.createTodo.bind(todoController));
 router.put('/:id', validateUpdateTodo, todoController.updateTodo.bind(todoController));
 router.delete('/:id', validateTodoId, todoController.deleteTodo.bind(todoController));
