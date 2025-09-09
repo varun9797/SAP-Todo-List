@@ -1,0 +1,118 @@
+<div class="todo-item" [class.completed]="todo.status === 'completed'">
+  <div class="todo-header">
+    <div class="todo-main">
+      @if (isEditing()) {
+      <div class="edit-form">
+        <input type="text" [(ngModel)]="editForm.title" class="edit-input title-input" placeholder="Todo title" />
+        <textarea [(ngModel)]="editForm.description" class="edit-input description-input" placeholder="Description"
+          rows="2"></textarea>
+        <select [(ngModel)]="editForm.status" class="edit-input status-select">
+          <option value="pending">Pending</option>
+          <option value="in-progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+      } @else {
+      <div class="todo-content">
+        <h3 class="todo-title">{{ todo.title }}</h3>
+        @if (todo.description) {
+        <p class="todo-description">{{ todo.description }}</p>
+        }
+        <div class="todo-meta">
+          <span class="status-badge" [class]="'status-' + todo.status">
+            {{ getStatusLabel(todo.status) }}
+          </span>
+          <span class="date">Created: {{ formatDate(todo.createdAt) }}</span>
+          @if (todo.updatedAt.getTime() !== todo.createdAt.getTime()) {
+          <span class="date">Updated: {{ formatDate(todo.updatedAt) }}</span>
+          }
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="todo-actions">
+      @if (isEditing()) {
+      <button (click)="saveTodo()" [disabled]="isSaving()" class="btn btn-success btn-sm">
+        {{ isSaving() ? 'Saving...' : 'Save' }}
+      </button>
+      <button (click)="cancelEdit()" class="btn btn-secondary btn-sm">
+        Cancel
+      </button>
+      } @else {
+      <button (click)="startEdit()" class="btn btn-primary btn-sm">
+        Edit
+      </button>
+      <button (click)="deleteTodo()" [disabled]="isDeleting()" class="btn btn-danger btn-sm">
+        {{ isDeleting() ? 'Deleting...' : 'Delete' }}
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Subtasks Section -->
+  <div class="subtasks-section">
+    <div class="subtasks-header">
+      <h4>Subtasks ({{ todo.subtasks.length }})</h4>
+      <button (click)="toggleSubtaskForm()" class="btn btn-outline btn-sm">
+        {{ showSubtaskForm() ? 'Cancel' : 'Add Subtask' }}
+      </button>
+    </div>
+
+    <!-- Add Subtask Form -->
+    @if (showSubtaskForm()) {
+    <div class="add-subtask-form">
+      <input type="text" [(ngModel)]="newSubtaskTitle" placeholder="Enter subtask title" class="form-control"
+        (keyup.enter)="addSubtask()" />
+      <button (click)="addSubtask()" [disabled]="!newSubtaskTitle.trim() || isAddingSubtask()"
+        class="btn btn-primary btn-sm">
+        {{ isAddingSubtask() ? 'Adding...' : 'Add' }}
+      </button>
+    </div>
+    }
+
+    <!-- Subtasks List -->
+    @if (todo.subtasks.length > 0) {
+    <div class="subtasks-list">
+      @for (subtask of todo.subtasks; track subtask.id) {
+      <div class="subtask-item" [class.completed]="subtask.completed">
+        @if (editingSubtaskId() === subtask.id) {
+        <div class="subtask-edit">
+          <input type="text" [(ngModel)]="editSubtaskTitle" class="form-control" />
+          <div class="subtask-actions">
+            <button (click)="saveSubtask(subtask.id)" [disabled]="isSavingSubtask()" class="btn btn-success btn-xs">
+              Save
+            </button>
+            <button (click)="cancelSubtaskEdit()" class="btn btn-secondary btn-xs">
+              Cancel
+            </button>
+          </div>
+        </div>
+        } @else {
+        <div class="subtask-content">
+          <div class="subtask-main">
+            <input type="checkbox" [checked]="subtask.completed"
+              (change)="toggleSubtaskCompletion(subtask.id, !subtask.completed)" class="subtask-checkbox" />
+            <span class="subtask-title" [class.completed]="subtask.completed">
+              {{ subtask.title }}
+            </span>
+          </div>
+          <div class="subtask-actions">
+            <button (click)="startSubtaskEdit(subtask.id, subtask.title)" class="btn btn-outline btn-xs">
+              Edit
+            </button>
+            <button (click)="deleteSubtask(subtask.id)" [disabled]="isDeletingSubtask() === subtask.id"
+              class="btn btn-danger btn-xs">
+              {{ isDeletingSubtask() === subtask.id ? 'Deleting...' : 'Delete' }}
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    } @else {
+    <p class="no-subtasks">No subtasks yet.</p>
+    }
+  </div>
+</div>

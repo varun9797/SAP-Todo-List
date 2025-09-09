@@ -1,0 +1,81 @@
+<div class="todo-card" [class.completed]="todo.status === 'completed'">
+  <div class="todo-header">
+    <div class="todo-main">
+      @if (isEditing()) {
+        <div class="edit-form">
+          <input 
+            type="text" 
+            [(ngModel)]="editForm.title" 
+            class="edit-input title-input"
+            placeholder="Todo title"
+          />
+          <textarea 
+            [(ngModel)]="editForm.description" 
+            class="edit-input description-input"
+            placeholder="Description"
+            rows="2"
+          ></textarea>
+          <select [(ngModel)]="editForm.status" class="edit-input status-select">
+            <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      } @else {
+        <div class="todo-content">
+          <div class="todo-title-section">
+            <input 
+              type="checkbox" 
+              [checked]="todo.status === 'completed'"
+              (change)="toggleStatus()"
+              class="todo-checkbox"
+            />
+            <h3 class="todo-title" [class.completed]="todo.status === 'completed'">
+              {{ todo.title }}
+            </h3>
+          </div>
+          
+          @if (todo.description) {
+            <p class="todo-description">{{ todo.description }}</p>
+          }
+          
+          <div class="todo-meta">
+            <span class="status-badge" [class]="'status-' + todo.status">
+              {{ getStatusLabel(todo.status) }}
+            </span>
+            <span class="date">Created: {{ formatDate(todo.createdAt) }}</span>
+            @if (todo.updatedAt.getTime() !== todo.createdAt.getTime()) {
+              <span class="date">Updated: {{ formatDate(todo.updatedAt) }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+    
+    <div class="todo-actions">
+      @if (isEditing()) {
+        <button 
+          (click)="saveTodo()" 
+          [disabled]="isSaving()"
+          class="btn btn-success btn-sm"
+        >
+          {{ isSaving() ? 'Saving...' : 'Save' }}
+        </button>
+        <button (click)="cancelEdit()" class="btn btn-secondary btn-sm">
+          Cancel
+        </button>
+      } @else {
+        <button (click)="startEdit()" class="btn btn-primary btn-sm">
+          Edit
+        </button>
+        <button 
+          (click)="deleteTodo()" 
+          [disabled]="isDeleting()"
+          class="btn btn-danger btn-sm"
+        >
+          {{ isDeleting() ? 'Deleting...' : 'Delete' }}
+        </button>
+      }
+    </div>
+  </div>
+</div>
