@@ -12,6 +12,8 @@ import {
   DEFAULT_TODO,
   UI_TIMING
 } from '../../constants/todo.constants';
+import { SharedService } from '../../services/shared.service';
+
 
 @Component({
   selector: 'app-todo-list',
@@ -71,8 +73,19 @@ export class TodoListComponent implements OnInit {
     status: DEFAULT_TODO.status
   };
 
+  constructor(private sharedService: SharedService) {
+
+  }
+
   ngOnInit() {
     this.loadTodos();
+    this.sharedService._addItemToList$.subscribe({
+      next: (newTodo: Todo) => {
+        if (newTodo && newTodo.id) {
+          this.onUpdateList(newTodo);
+        }
+      }
+    });
   }
 
   loadTodos() {
@@ -92,27 +105,7 @@ export class TodoListComponent implements OnInit {
     });
   }
 
-  addTodo() {
-    if (!this.newTodo.title.trim()) return;
 
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.todoService.createTodo(this.newTodo).subscribe({
-      next: (newTodo) => {
-        this.todos.update(todos => [...todos, newTodo]);
-        this.resetForm();
-        this.successMessage.set(SUCCESS_MESSAGES.TODO_CREATED);
-        this.isLoading.set(false);
-        setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
-      },
-      error: (err) => {
-        this.error.set(ERROR_MESSAGES.CREATE_TODO_FAILED);
-        this.isLoading.set(false);
-        console.error('Error creating todo:', err);
-      }
-    });
-  }
 
   onTodoUpdated(updatedTodo: Todo) {
     this.todos.update(todos =>
@@ -155,6 +148,10 @@ export class TodoListComponent implements OnInit {
     );
     this.successMessage.set(SUCCESS_MESSAGES.SUBTASK_UPDATED);
     setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
+  }
+
+  onUpdateList(newTodo: Todo) {
+    this.todos.update(todos => [...todos, newTodo]);
   }
 
   onSubtaskDeleted(todoId: string, subtaskId: string) {
