@@ -46,11 +46,13 @@ export class TodoFormComponent {
         // this.updateList.emit(newTodo);
         this.sharedService.triggerAddItemToList(newTodo);
         this.resetForm();
+        this.isLoading.set(false);
       },
       error: (err) => {
 
         this.sharedService.triggerErrorWhileAddingTodo(true);
         console.error('Error creating todo:', err);
+        this.isLoading.set(false);
       }
     });
   }
