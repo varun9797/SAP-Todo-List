@@ -82,7 +82,15 @@ export class TodoListComponent implements OnInit {
     this.sharedService._addItemToList$.subscribe({
       next: (newTodo: Todo) => {
         if (newTodo && newTodo.id) {
-          this.onUpdateList(newTodo);
+          this.addNewTodoToList(newTodo);
+        }
+      }
+    });
+    this.sharedService._isErrorWhileAddingTodo$.subscribe({
+      next: (isError: boolean) => {
+        if (isError) {
+          this.error.set(ERROR_MESSAGES.CREATE_TODO_FAILED);
+          this.isLoading.set(false);
         }
       }
     });
@@ -150,8 +158,11 @@ export class TodoListComponent implements OnInit {
     setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
   }
 
-  onUpdateList(newTodo: Todo) {
+  addNewTodoToList(newTodo: Todo) {
     this.todos.update(todos => [...todos, newTodo]);
+    this.successMessage.set(SUCCESS_MESSAGES.TODO_CREATED);
+    this.isLoading.set(false);
+    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
   }
 
   onSubtaskDeleted(todoId: string, subtaskId: string) {
