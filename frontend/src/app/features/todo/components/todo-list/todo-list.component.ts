@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { TodoService } from '../../services/todo.service';
 import { Todo, CreateTodoRequest } from '../../models/todo.types';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
-import { 
-  TODO_STATUS, 
-  FilterStatus, 
-  SUCCESS_MESSAGES, 
-  ERROR_MESSAGES, 
+import {
+  TODO_STATUS,
+  FilterStatus,
+  SUCCESS_MESSAGES,
+  ERROR_MESSAGES,
   DEFAULT_TODO,
   UI_TIMING
 } from '../../constants/todo.constants';
@@ -22,7 +22,7 @@ import {
 })
 export class TodoListComponent implements OnInit {
   private readonly todoService = inject(TodoService);
-  
+
   // Expose constants to template
   readonly TODO_STATUS = TODO_STATUS;
   readonly TODO_STATUS_OPTIONS = [
@@ -34,34 +34,33 @@ export class TodoListComponent implements OnInit {
     { value: TODO_STATUS.ALL, label: 'All' },
     ...this.TODO_STATUS_OPTIONS
   ];
-  
   // Signals
   readonly todos = signal<Todo[]>([]);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
-  
+
   // Filter
-  filterStatus: FilterStatus = TODO_STATUS.ALL;
-  
+  filterStatus = signal<FilterStatus>(TODO_STATUS.ALL);
+
   // Computed values
   readonly filteredTodos = computed(() => {
     const allTodos = this.todos();
-    if (this.filterStatus === TODO_STATUS.ALL) {
+    if (this.filterStatus() === TODO_STATUS.ALL) {
       return allTodos;
     }
-    return allTodos.filter(todo => todo.status === this.filterStatus);
+    return allTodos.filter(todo => todo.status === this.filterStatus());
   });
-  
-  readonly pendingCount = computed(() => 
+
+  readonly pendingCount = computed(() =>
     this.todos().filter(todo => todo.status === TODO_STATUS.PENDING).length
   );
-  
-  readonly inProgressCount = computed(() => 
+
+  readonly inProgressCount = computed(() =>
     this.todos().filter(todo => todo.status === TODO_STATUS.IN_PROGRESS).length
   );
-  
-  readonly completedCount = computed(() => 
+
+  readonly completedCount = computed(() =>
     this.todos().filter(todo => todo.status === TODO_STATUS.COMPLETED).length
   );
 
@@ -79,7 +78,7 @@ export class TodoListComponent implements OnInit {
   loadTodos() {
     this.isLoading.set(true);
     this.error.set(null);
-    
+
     this.todoService.getAllTodos().subscribe({
       next: (todos) => {
         this.todos.set(todos);
@@ -95,10 +94,10 @@ export class TodoListComponent implements OnInit {
 
   addTodo() {
     if (!this.newTodo.title.trim()) return;
-    
+
     this.isLoading.set(true);
     this.error.set(null);
-    
+
     this.todoService.createTodo(this.newTodo).subscribe({
       next: (newTodo) => {
         this.todos.update(todos => [...todos, newTodo]);
@@ -116,7 +115,7 @@ export class TodoListComponent implements OnInit {
   }
 
   onTodoUpdated(updatedTodo: Todo) {
-    this.todos.update(todos => 
+    this.todos.update(todos =>
       todos.map(todo => todo.id === updatedTodo.id ? updatedTodo : todo)
     );
     this.successMessage.set(SUCCESS_MESSAGES.TODO_UPDATED);
@@ -146,11 +145,11 @@ export class TodoListComponent implements OnInit {
       todos.map(todo =>
         todo.id === todoId
           ? {
-              ...todo,
-              subtasks: todo.subtasks.map(subtask =>
-                subtask.id === subtaskId ? { ...subtask, ...updates } : subtask
-              )
-            }
+            ...todo,
+            subtasks: todo.subtasks.map(subtask =>
+              subtask.id === subtaskId ? { ...subtask, ...updates } : subtask
+            )
+          }
           : todo
       )
     );
