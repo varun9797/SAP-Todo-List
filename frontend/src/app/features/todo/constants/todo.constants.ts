@@ -55,7 +55,7 @@ export const ERROR_MESSAGES = {
 export const DEFAULT_TODO = {
     title: '',
     description: '',
-    status: TODO_STATUS.PENDING
+    status: TODO_STATUS.PENDING,
 } as const;
 
 /**

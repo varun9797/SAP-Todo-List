@@ -1,17 +1,17 @@
-<div class="todo-item" [class.completed]="todo.status === TODO_STATUS.COMPLETED">
+<div class="todo-item" [class.completed]="todo.status === 'completed'">
   <div class="todo-header">
     <div class="todo-main">
       @if (isEditing()) {
-      <div class="edit-form">
-        <input type="text" [(ngModel)]="editForm.title" class="edit-input title-input" placeholder="Todo title" />
-        <textarea [(ngModel)]="editForm.description" class="edit-input description-input" placeholder="Description"
+      <form [formGroup]="editForm" class="edit-form">
+        <input type="text" formControlName="title" class="edit-input title-input" placeholder="Todo title" />
+        <textarea formControlName="description" class="edit-input description-input" placeholder="Description"
           rows="2"></textarea>
-        <select [(ngModel)]="editForm.status" class="edit-input status-select">
+        <select formControlName="status" class="edit-input status-select">
           @for (option of TODO_STATUS_OPTIONS; track option.value) {
           <option [value]="option.value">{{ option.label }}</option>
           }
         </select>
-      </div>
+      </form>
       } @else {
       <div class="todo-content">
         <h3 class="todo-title">{{ todo.title }}</h3>
@@ -33,7 +33,7 @@
 
     <div class="todo-actions">
       @if (isEditing()) {
-      <button (click)="saveTodo()" [disabled]="isSaving()" class="btn btn-success btn-sm">
+      <button (click)="saveTodo()" [disabled]="editForm.invalid || isSaving()" class="btn btn-success btn-sm">
         {{ isSaving() ? 'Saving...' : 'Save' }}
       </button>
       <button (click)="cancelEdit()" class="btn btn-secondary btn-sm">
@@ -61,14 +61,14 @@
 
     <!-- Add Subtask Form -->
     @if (showSubtaskForm()) {
-    <div class="add-subtask-form">
-      <input type="text" [(ngModel)]="newSubtaskTitle" placeholder="Enter subtask title" class="form-control"
+    <form [formGroup]="subtaskForm" class="add-subtask-form">
+      <input type="text" formControlName="title" placeholder="Enter subtask title" class="form-control"
         (keyup.enter)="addSubtask()" />
-      <button (click)="addSubtask()" [disabled]="!newSubtaskTitle.trim() || isAddingSubtask()"
+      <button (click)="addSubtask()" [disabled]="subtaskForm.invalid || isAddingSubtask()"
         class="btn btn-primary btn-sm">
         {{ isAddingSubtask() ? 'Adding...' : 'Add' }}
       </button>
-    </div>
+    </form>
     }
 
     <!-- Subtasks List -->
@@ -77,17 +77,18 @@
       @for (subtask of todo.subtasks; track subtask.id) {
       <div class="subtask-item" [class.completed]="subtask.completed">
         @if (editingSubtaskId() === subtask.id) {
-        <div class="subtask-edit">
-          <input type="text" [(ngModel)]="editSubtaskTitle" class="form-control" />
+        <form [formGroup]="editSubtaskForm" class="subtask-edit">
+          <input type="text" formControlName="title" class="form-control" />
           <div class="subtask-actions">
-            <button (click)="saveSubtask(subtask.id)" [disabled]="isSavingSubtask()" class="btn btn-success btn-xs">
+            <button (click)="saveSubtask(subtask.id)" [disabled]="editSubtaskForm.invalid || isSavingSubtask()"
+              class="btn btn-success btn-xs">
               Save
             </button>
             <button (click)="cancelSubtaskEdit()" class="btn btn-secondary btn-xs">
               Cancel
             </button>
           </div>
-        </div>
+        </form>
         } @else {
         <div class="subtask-content">
           <div class="subtask-main">

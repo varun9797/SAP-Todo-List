@@ -19,7 +19,7 @@ export interface Todo {
 export interface CreateTodoRequest {
   title: string;
   description?: string;
-  status?: 'pending' | 'in-progress' | 'completed';
+  status?: 'pending' | 'in-progress' | 'completed'
 }
 
 export interface UpdateTodoRequest {
