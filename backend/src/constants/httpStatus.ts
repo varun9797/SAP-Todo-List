@@ -19,7 +19,7 @@ export const HTTP_STATUS = {
   // Server error codes
   INTERNAL_SERVER_ERROR: 500,
   BAD_GATEWAY: 502,
-  SERVICE_UNAVAILABLE: 503
+  SERVICE_UNAVAILABLE: 503,
 } as const;
 
-export type HttpStatusCode = typeof HTTP_STATUS[keyof typeof HTTP_STATUS];
+export type HttpStatusCode = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];

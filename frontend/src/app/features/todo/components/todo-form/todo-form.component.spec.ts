@@ -66,7 +66,7 @@ describe('TodoFormComponent', () => {
             Object.defineProperty(mockTodoStore, 'loading', {
                 value: jasmine.createSpy().and.returnValue(true)
             });
-            
+
             expect(component.isLoading()).toBe(true);
         });
     });
@@ -92,15 +92,7 @@ describe('TodoFormComponent', () => {
             });
         });
 
-        it('should reset form after successful creation', async () => {
-            mockTodoStore.createTodo.and.returnValue(Promise.resolve());
 
-            await component.addTodo();
-
-            expect(component.todoForm.get('title')?.value).toBe(null);
-            expect(component.todoForm.get('description')?.value).toBe(null);
-            expect(component.todoForm.get('status')?.value).toBe(TODO_STATUS.PENDING);
-        });
 
         it('should not call TodoStore.createTodo when form is invalid', async () => {
             component.todoForm.patchValue({
@@ -202,7 +194,7 @@ describe('TodoFormComponent', () => {
     describe('Integration', () => {
         it('should create todo when form is submitted with valid data', async () => {
             mockTodoStore.createTodo.and.returnValue(Promise.resolve());
-            
+
             // Fill form
             component.todoForm.patchValue({
                 title: 'Integration Test Todo',

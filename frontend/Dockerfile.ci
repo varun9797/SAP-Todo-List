@@ -1,5 +1,11 @@
-# Multi-stage build for Angular application with quality checks
+# CI/CD build for Angular application with strict quality checks
 FROM node:20-alpine AS base
+
+# Build arguments for controlling quality checks
+ARG SKIP_TESTS=false
+ARG SKIP_LINT=false
+ARG SKIP_TYPE_CHECK=false
+ARG FAIL_ON_WARNINGS=true
 
 # Set working directory
 WORKDIR /app
@@ -13,8 +19,8 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Quality checks stage
-FROM base AS quality-checks
+# Quality checks stage (CI/CD - strict)
+FROM base AS quality-checks-ci
 
 # Install Chrome for testing (required for Karma)
 RUN apk add --no-cache \
@@ -26,34 +32,50 @@ RUN apk add --no-cache \
     ca-certificates \
     ttf-freefont
 
-# Set Chrome binary path for Karma
-ENV CHROME_BIN=/usr/bin/chromium-browser
-ENV DISPLAY=:99
+# Set Puppeteer to use installed Chromium
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Copy build arguments
+ARG SKIP_TESTS
+ARG SKIP_LINT
+ARG SKIP_TYPE_CHECK
+ARG FAIL_ON_WARNINGS
 
 # Run TypeScript type checking
-RUN echo "🔍 Running TypeScript type checking..." && \
-    npx tsc --noEmit || \
-    (echo "❌ TypeScript compilation failed!" && exit 1)
+RUN if [ "$SKIP_TYPE_CHECK" != "true" ]; then \
+        echo "🔍 Running TypeScript type checking..." && \
+        npx tsc --noEmit || \
+        (echo "❌ TypeScript compilation failed!" && exit 1); \
+    else \
+        echo "⏭️ Skipping TypeScript type checking"; \
+    fi
 
 # Run ESLint
-RUN echo "🔍 Running ESLint..." && \
-    npm run lint || \
-    (echo "❌ ESLint checks failed!" && exit 1)
+RUN if [ "$SKIP_LINT" != "true" ]; then \
+        echo "🔍 Running ESLint..." && \
+        npm run lint || \
+        (echo "❌ ESLint checks failed!" && exit 1); \
+    else \
+        echo "⏭️ Skipping ESLint"; \
+    fi
 
-# Run tests with Docker-compatible browser configuration
-RUN echo "🔍 Running tests..." && \
-    find src -name "*.spec.ts" -type f | head -5 && \
-    npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox || \
-    (echo "⚠️  Some tests failed, but continuing build..." && exit 0)
+# Run tests
+RUN if [ "$SKIP_TESTS" != "true" ]; then \
+        echo "🔍 Running tests..." && \
+        npm run test -- --watch=false --browsers=ChromiumHeadless || \
+        (echo "❌ Tests failed!" && exit 1); \
+    else \
+        echo "⏭️ Skipping tests"; \
+    fi
 
 # Builder stage
 FROM base AS builder
 
-# Copy quality check results (implicit validation that quality checks passed)
-COPY --from=quality-checks /app/package.json /tmp/quality-passed
+# Copy quality check results (validation that quality checks passed)
+COPY --from=quality-checks-ci /app/package.json /tmp/quality-passed
 
 # Build the application for production
-RUN echo "🏗️ Building Angular application..." && \
+RUN echo "🏗️ Building Angular application for CI/CD..." && \
     npm run build
 
 # Production stage with Nginx

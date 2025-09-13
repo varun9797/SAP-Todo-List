@@ -9,6 +9,4 @@ dist
 coverage
 *.md
 e2e
-src/**/*.spec.ts
-karma.conf.js
 .editorconfig

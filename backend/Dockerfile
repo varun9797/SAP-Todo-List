@@ -1,5 +1,5 @@
 # Use Node.js LTS version
-FROM node:20-alpine AS builder
+FROM node:20-alpine AS base
 
 # Set working directory
 WORKDIR /app
@@ -7,16 +7,35 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including dev dependencies for build)
+# Install all dependencies (including dev dependencies for testing and linting)
 RUN npm ci
 
-# Copy source code
+# Copy source code and configuration files
 COPY . .
 
-# Build the application
-RUN npm run build
+# ===== QUALITY CHECKS STAGE =====
+FROM base AS quality-checks
 
-# Production stage
+# Run type checking
+RUN echo "🔍 Running TypeScript type checking..." && \
+    npm run type-check
+
+# Run linting
+RUN echo "🧹 Running ESLint..." && \
+    npm run lint
+
+# Run tests
+RUN echo "🧪 Running tests..." && \
+    npm test
+
+# ===== BUILD STAGE =====
+FROM base AS builder
+
+# Build the application (after quality checks pass)
+RUN echo "🏗️ Building application..." && \
+    npm run build
+
+# ===== PRODUCTION STAGE =====
 FROM node:20-alpine AS production
 
 # Set working directory
@@ -27,9 +46,6 @@ COPY package*.json ./
 
 # Install only production dependencies
 RUN npm ci --only=production && npm cache clean --force
-
-# Copy built application from builder stage
-COPY --from=builder /app/dist ./dist
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist

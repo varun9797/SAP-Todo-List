@@ -49,7 +49,7 @@ app.use((req, res) => {
 });
 
 // Global error handler
-app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((error: any, req: express.Request, res: express.Response, _next: express.NextFunction) => {
     console.error('Global error:', error);
 
     res.status(error.status || 500).json({
