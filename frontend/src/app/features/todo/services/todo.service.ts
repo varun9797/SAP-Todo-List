@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
 import { Todo, CreateTodoRequest, UpdateTodoRequest, CreateSubTaskRequest, UpdateSubTaskRequest, ApiResponse, SubTask } from '../models/todo.types';
 import { RawTodo, RawSubTask } from '../models/raw-api.types';

@@ -1,0 +1,98 @@
+.subtask-item {
+    background-color: var(--bs-light);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        background-color: var(--bs-gray-100);
+        border-color: var(--bs-gray-300);
+    }
+}
+
+.subtask-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtask-checkbox {
+    margin: 0;
+    width: 1rem;
+    height: 1rem;
+}
+
+.subtask-title {
+    flex: 1;
+    font-weight: 500;
+    color: var(--bs-gray-800);
+    transition: all 0.2s ease-in-out;
+
+    &.completed {
+        text-decoration: line-through;
+        color: var(--bs-gray-500);
+    }
+}
+
+.subtask-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+
+.subtask-date {
+    color: var(--bs-gray-600);
+    font-size: 0.75rem;
+}
+
+.subtask-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.subtask-edit-form {
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-control {
+        font-size: 0.875rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+}
+
+// Dark mode support
+[data-bs-theme="dark"] {
+    .subtask-item {
+        background-color: var(--bs-gray-800);
+        border-color: var(--bs-gray-700);
+
+        &:hover {
+            background-color: var(--bs-gray-700);
+            border-color: var(--bs-gray-600);
+        }
+    }
+
+    .subtask-title {
+        color: var(--bs-gray-200);
+
+        &.completed {
+            color: var(--bs-gray-400);
+        }
+    }
+
+    .subtask-date {
+        color: var(--bs-gray-400);
+    }
+}

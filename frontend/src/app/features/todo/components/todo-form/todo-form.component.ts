@@ -1,15 +1,15 @@
 import { Component, signal } from '@angular/core';
-import { CreateTodoRequest } from '../../models/todo.types';
-import { DEFAULT_TODO, TODO_STATUS } from '../../constants/todo.constants';
+import { TODO_STATUS } from '../../constants/todo.constants';
 import { TodoService } from '../../services/todo.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SharedService } from '../../services/shared.service';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 
 @Component({
   selector: 'app-todo-form',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonComponent],
   templateUrl: './todo-form.component.html',
   styleUrl: './todo-form.component.scss'
 })
@@ -24,7 +24,7 @@ export class TodoFormComponent {
   ];
 
   constructor(
-    private todoService: TodoService, 
+    private todoService: TodoService,
     private sharedService: SharedService,
     private fb: FormBuilder
   ) {
@@ -37,7 +37,7 @@ export class TodoFormComponent {
 
   addTodo() {
     if (this.todoForm.invalid) return;
-    
+
     this.isLoading.set(true);
 
     this.todoService.createTodo(this.todoForm.value).subscribe({
@@ -46,9 +46,8 @@ export class TodoFormComponent {
         this.todoForm.reset({ status: TODO_STATUS.PENDING });
         this.isLoading.set(false);
       },
-      error: (err) => {
+      error: (_err) => {
         this.sharedService.triggerErrorWhileAddingTodo(true);
-        console.error('Error creating todo:', err);
         this.isLoading.set(false);
       }
     });

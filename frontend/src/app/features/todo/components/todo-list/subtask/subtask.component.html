@@ -1,0 +1,50 @@
+<div class="subtask-item">
+    <div class="subtask-content" *ngIf="!isEditing()">
+        <div class="subtask-header">
+            <input type="checkbox" [checked]="subtask.completed" (change)="toggleCompletion()" class="subtask-checkbox">
+            <span class="subtask-title" [class.completed]="subtask.completed">
+                {{ subtask.title }}
+            </span>
+        </div>
+
+        <div class="subtask-meta">
+            <small class="subtask-date">
+                Created: {{ formatDate(subtask.createdAt) }}
+            </small>
+            <small class="subtask-date" *ngIf="subtask.updatedAt">
+                Updated: {{ formatDate(subtask.updatedAt) }}
+            </small>
+        </div>
+
+        <div class="subtask-actions">
+            <app-button variant="outline-primary" size="sm" [disabled]="isDeleting()" (clicked)="startEdit()">
+                Edit
+            </app-button>
+            <app-button variant="outline-danger" size="sm" [disabled]="isDeleting()" [loading]="isDeleting()"
+                loadingText="Deleting..." (clicked)="deleteSubtask()">
+                Delete
+            </app-button>
+        </div>
+    </div>
+
+    <div class="subtask-edit-form" *ngIf="isEditing()">
+        <form [formGroup]="editForm" (ngSubmit)="saveSubtask()">
+            <div class="form-group">
+                <input type="text" class="form-control" formControlName="title" placeholder="Subtask title" required>
+                <div class="invalid-feedback" *ngIf="editForm.get('title')?.invalid && editForm.get('title')?.touched">
+                    Title is required
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <app-button type="submit" variant="success" size="sm" [disabled]="editForm.invalid"
+                    [loading]="isSaving()" loadingText="Saving..." (clicked)="saveSubtask()">
+                    Save
+                </app-button>
+                <app-button variant="secondary" size="sm" (clicked)="cancelEdit()">
+                    Cancel
+                </app-button>
+            </div>
+        </form>
+    </div>
+</div>

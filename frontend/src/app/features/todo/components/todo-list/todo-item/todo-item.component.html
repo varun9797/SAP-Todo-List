@@ -1,0 +1,86 @@
+<div class="todo-item" [class.completed]="todo.status === 'completed'">
+  <div class="todo-header">
+    <div class="todo-main">
+      @if (isEditing()) {
+      <form [formGroup]="editForm" class="edit-form">
+        <input type="text" formControlName="title" class="edit-input title-input" placeholder="Todo title" />
+        <textarea formControlName="description" class="edit-input description-input" placeholder="Description"
+          rows="2"></textarea>
+        <select formControlName="status" class="edit-input status-select">
+          @for (option of TODO_STATUS_OPTIONS; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </form>
+      } @else {
+      <div class="todo-content">
+        <h3 class="todo-title">{{ todo.title }}</h3>
+        @if (todo.description) {
+        <p class="todo-description">{{ todo.description }}</p>
+        }
+        <div class="todo-meta">
+          <span class="status-badge" [class]="'status-' + todo.status">
+            {{ getStatusLabel(todo.status) }}
+          </span>
+          <span class="date">Created: {{ formatDate(todo.createdAt) }}</span>
+          @if (todo.updatedAt.getTime() !== todo.createdAt.getTime()) {
+          <span class="date">Updated: {{ formatDate(todo.updatedAt) }}</span>
+          }
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="todo-actions">
+      @if (isEditing()) {
+      <app-button variant="success" size="sm" [disabled]="editForm.invalid" (clicked)="saveTodo()">
+        Save
+      </app-button>
+      <app-button variant="secondary" size="sm" (clicked)="cancelEdit()">
+        Cancel
+      </app-button>
+      } @else {
+      <app-button variant="primary" size="sm" (clicked)="startEdit()">
+        Edit
+      </app-button>
+      <app-button variant="danger" size="sm" (clicked)="deleteTodo()">
+        Delete
+      </app-button>
+      }
+    </div>
+  </div>
+
+  <!-- Subtasks Section -->
+  <div class="subtasks-section">
+    <div class="subtasks-header">
+      <h4>Subtasks ({{ todo.subtasks.length }})</h4>
+      <app-button variant="outline-primary" size="sm" (clicked)="toggleSubtaskForm()">
+        {{ showSubtaskForm() ? 'Cancel' : 'Add Subtask' }}
+      </app-button>
+    </div>
+
+    <!-- Add Subtask Form -->
+    @if (showSubtaskForm()) {
+    <form [formGroup]="subtaskForm" class="add-subtask-form">
+      <input type="text" formControlName="title" placeholder="Enter subtask title" class="form-control"
+        (keyup.enter)="addSubtask()" />
+      <app-button variant="primary" size="sm" [disabled]="subtaskForm.invalid" (clicked)="addSubtask()">
+        Add
+      </app-button>
+    </form>
+    }
+
+    <!-- Subtasks List -->
+    @if (todo.subtasks.length > 0) {
+    <div class="subtasks-list">
+      @for (subtask of todo.subtasks; track subtask.id) {
+      <app-subtask [subtask]="subtask" [todoId]="todo.id" (subtaskUpdated)="onSubtaskUpdated($event)"
+        (subtaskDeleted)="onSubtaskDeleted($event)">
+      </app-subtask>
+      }
+    </div>
+    } @else {
+    <p class="no-subtasks">No subtasks yet.</p>
+    }
+  </div>
+</div>

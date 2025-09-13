@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { TodoContainerComponent } from './features/todo/components/todo-container/todo-container.component';
 
 @Component({

@@ -1,199 +1,42 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { TodoService } from '../../services/todo.service';
-import { Todo, CreateTodoRequest } from '../../models/todo.types';
-import { TodoItemComponent } from '../todo-item/todo-item.component';
-import {
-  TODO_STATUS,
-  FilterStatus,
-  SUCCESS_MESSAGES,
-  ERROR_MESSAGES,
-  DEFAULT_TODO,
-  UI_TIMING
-} from '../../constants/todo.constants';
-import { SharedService } from '../../services/shared.service';
-
+import { TodoItemComponent } from './todo-item/todo-item.component';
+import { Todo, SubTask, CreateSubTaskRequest } from '../../models/todo.types';
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, TodoItemComponent],
+  imports: [CommonModule, TodoItemComponent],
   templateUrl: './todo-list.component.html',
   styleUrl: './todo-list.component.scss'
 })
-export class TodoListComponent implements OnInit {
-  private readonly todoService = inject(TodoService);
+export class TodoListComponent {
+  @Input({ required: true }) todos!: Todo[];
+  @Input({ required: true }) isLoading!: boolean;
 
-  // Expose constants to template
-  readonly TODO_STATUS = TODO_STATUS;
-  readonly TODO_STATUS_OPTIONS = [
-    { value: TODO_STATUS.PENDING, label: 'Pending' },
-    { value: TODO_STATUS.IN_PROGRESS, label: 'In Progress' },
-    { value: TODO_STATUS.COMPLETED, label: 'Completed' }
-  ];
-  readonly FILTER_OPTIONS = [
-    { value: TODO_STATUS.ALL, label: 'All' },
-    ...this.TODO_STATUS_OPTIONS
-  ];
-  // Signals
-  readonly todos = signal<Todo[]>([]);
-  readonly isLoading = signal(false);
-  readonly error = signal<string | null>(null);
-  readonly successMessage = signal<string | null>(null);
+  @Output() todoUpdated = new EventEmitter<Todo>();
+  @Output() todoDeleted = new EventEmitter<string>();
+  @Output() subtaskAdded = new EventEmitter<{ todoId: string; subtask: CreateSubTaskRequest }>();
+  @Output() subtaskUpdated = new EventEmitter<{ todoId: string; subtaskId: string; updates: Partial<SubTask> }>();
+  @Output() subtaskDeleted = new EventEmitter<{ todoId: string; subtaskId: string }>();
 
-  // Filter
-  filterStatus = signal<FilterStatus>(TODO_STATUS.ALL);
-
-  // Computed values
-  readonly filteredTodos = computed(() => {
-    const allTodos = this.todos();
-    if (this.filterStatus() === TODO_STATUS.ALL) {
-      return allTodos;
-    }
-    return allTodos.filter(todo => todo.status === this.filterStatus());
-  });
-
-  readonly pendingCount = computed(() =>
-    this.todos().filter(todo => todo.status === TODO_STATUS.PENDING).length
-  );
-
-  readonly inProgressCount = computed(() =>
-    this.todos().filter(todo => todo.status === TODO_STATUS.IN_PROGRESS).length
-  );
-
-  readonly completedCount = computed(() =>
-    this.todos().filter(todo => todo.status === TODO_STATUS.COMPLETED).length
-  );
-
-  // Form data
-  newTodo: CreateTodoRequest = {
-    title: DEFAULT_TODO.title,
-    description: DEFAULT_TODO.description,
-    status: DEFAULT_TODO.status
-  };
-
-  constructor(private sharedService: SharedService) {
-
+  onTodoUpdated(updatedTodo: Todo): void {
+    this.todoUpdated.emit(updatedTodo);
   }
 
-  ngOnInit() {
-    this.loadTodos();
-    this.sharedService._addItemToList$.subscribe({
-      next: (newTodo: Todo) => {
-        if (newTodo && newTodo.id) {
-          this.addNewTodoToList(newTodo);
-        }
-      }
-    });
-    this.sharedService._isErrorWhileAddingTodo$.subscribe({
-      next: (isError: boolean) => {
-        if (isError) {
-          this.error.set(ERROR_MESSAGES.CREATE_TODO_FAILED);
-          this.isLoading.set(false);
-        }
-      }
-    });
+  onTodoDeleted(todoId: string): void {
+    this.todoDeleted.emit(todoId);
   }
 
-  loadTodos() {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.todoService.getAllTodos().subscribe({
-      next: (todos) => {
-        this.todos.set(todos);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        this.error.set(ERROR_MESSAGES.LOAD_TODOS_FAILED);
-        this.isLoading.set(false);
-        console.error('Error loading todos:', err);
-      }
-    });
+  onSubtaskAdded(event: { todoId: string; subtask: CreateSubTaskRequest }): void {
+    this.subtaskAdded.emit(event);
   }
 
-
-
-  onTodoUpdated(updatedTodo: Todo) {
-    this.todos.update(todos =>
-      todos.map(todo => todo.id === updatedTodo.id ? updatedTodo : todo)
-    );
-    this.successMessage.set(SUCCESS_MESSAGES.TODO_UPDATED);
-    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
+  onSubtaskUpdated(event: { todoId: string; subtaskId: string; updates: Partial<SubTask> }): void {
+    this.subtaskUpdated.emit(event);
   }
 
-  onTodoDeleted(todoId: string) {
-    this.todos.update(todos => todos.filter(todo => todo.id !== todoId));
-    this.successMessage.set(SUCCESS_MESSAGES.TODO_DELETED);
-    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
-  }
-
-  onSubtaskAdded(todoId: string, subtask: any) {
-    this.todos.update(todos =>
-      todos.map(todo =>
-        todo.id === todoId
-          ? { ...todo, subtasks: [...todo.subtasks, subtask] }
-          : todo
-      )
-    );
-    this.successMessage.set(SUCCESS_MESSAGES.SUBTASK_ADDED);
-    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
-  }
-
-  onSubtaskUpdated(todoId: string, subtaskId: string, updates: any) {
-    this.todos.update(todos =>
-      todos.map(todo =>
-        todo.id === todoId
-          ? {
-            ...todo,
-            subtasks: todo.subtasks.map(subtask =>
-              subtask.id === subtaskId ? { ...subtask, ...updates } : subtask
-            )
-          }
-          : todo
-      )
-    );
-    this.successMessage.set(SUCCESS_MESSAGES.SUBTASK_UPDATED);
-    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
-  }
-
-  addNewTodoToList(newTodo: Todo) {
-    this.todos.update(todos => [...todos, newTodo]);
-    this.successMessage.set(SUCCESS_MESSAGES.TODO_CREATED);
-    this.isLoading.set(false);
-    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
-  }
-
-  onSubtaskDeleted(todoId: string, subtaskId: string) {
-    this.todos.update(todos =>
-      todos.map(todo =>
-        todo.id === todoId
-          ? { ...todo, subtasks: todo.subtasks.filter(subtask => subtask.id !== subtaskId) }
-          : todo
-      )
-    );
-    this.successMessage.set(SUCCESS_MESSAGES.SUBTASK_DELETED);
-    setTimeout(() => this.clearSuccess(), UI_TIMING.SUCCESS_MESSAGE_TIMEOUT);
-  }
-
-  onFilterChange() {
-    // Filter is automatically updated via computed signal
-  }
-
-  resetForm() {
-    this.newTodo = {
-      title: DEFAULT_TODO.title,
-      description: DEFAULT_TODO.description,
-      status: DEFAULT_TODO.status
-    };
-  }
-
-  clearError() {
-    this.error.set(null);
-  }
-
-  clearSuccess() {
-    this.successMessage.set(null);
+  onSubtaskDeleted(event: { todoId: string; subtaskId: string }): void {
+    this.subtaskDeleted.emit(event);
   }
 }

@@ -4,22 +4,13 @@
     <form [formGroup]="todoForm" (ngSubmit)="addTodo()" class="form">
         <div class="form-group">
             <label for="title">Title *</label>
-            <input 
-                id="title" 
-                type="text" 
-                formControlName="title" 
-                placeholder="Enter todo title"
-                class="form-control" />
+            <input id="title" type="text" formControlName="title" placeholder="Enter todo title" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="description">Description</label>
-            <textarea 
-                id="description" 
-                formControlName="description"
-                placeholder="Enter todo description (optional)" 
-                rows="3" 
-                class="form-control"></textarea>
+            <textarea id="description" formControlName="description" placeholder="Enter todo description (optional)"
+                rows="3" class="form-control"></textarea>
         </div>
 
         <div class="form-group">
@@ -31,8 +22,9 @@
             </select>
         </div>
 
-        <button type="submit" [disabled]="todoForm.invalid || isLoading()" class="btn btn-primary">
-            {{ isLoading() ? 'Adding...' : 'Add Todo' }}
-        </button>
+        <app-button type="submit" variant="primary" [disabled]="todoForm.invalid" [loading]="isLoading()"
+            loadingText="Adding..." (clicked)="addTodo()">
+            Add Todo
+        </app-button>
     </form>
 </div>

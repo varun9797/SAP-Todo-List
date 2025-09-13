@@ -1,66 +1,16 @@
-<div class="todo-container">
-  <!-- <header class="header">
-    <h1>Todo Management</h1>
-    <p class="subtitle">Organize your tasks efficiently</p>
-  </header>
-
-  <app-todo-form (updateList)="onUpdateList($event)"></app-todo-form> -->
-
-  <!-- Filter and Stats -->
-  <div class="controls">
-    <div class="filters">
-      <label for="filter">Filter by status:</label>
-      <select id="filter" [(ngModel)]="filterStatus" (ngModelChange)="onFilterChange()"
-        class="form-control filter-select">
-        @for (option of FILTER_OPTIONS; track option.value) {
-        <option [value]="option.value">{{ option.label }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="stats">
-      <span class="stat">Total: {{ todos().length }}</span>
-      <span class="stat">Pending: {{ pendingCount() }}</span>
-      <span class="stat">In Progress: {{ inProgressCount() }}</span>
-      <span class="stat">Completed: {{ completedCount() }}</span>
-    </div>
+<!-- Todo List -->
+<div class="todo-list">
+  @if (isLoading) {
+  <div class="loading">Loading todos...</div>
+  } @else if (todos.length === 0) {
+  <div class="empty-state">
+    <p>No todos to display.</p>
   </div>
-
-  <!-- Error Message -->
-  @if (error()) {
-  <div class="error-message">
-    {{ error() }}
-    <button (click)="clearError()" class="close-btn">&times;</button>
-  </div>
+  } @else {
+  @for (todo of todos; track todo.id) {
+  <app-todo-item [todo]="todo" (todoUpdated)="onTodoUpdated($event)" (todoDeleted)="onTodoDeleted($event)"
+    (subtaskAdded)="onSubtaskAdded($event)" (subtaskUpdated)="onSubtaskUpdated($event)"
+    (subtaskDeleted)="onSubtaskDeleted($event)" />
   }
-
-  <!-- Success Message -->
-  @if (successMessage()) {
-  <div class="success-message">
-    {{ successMessage() }}
-    <button (click)="clearSuccess()" class="close-btn">&times;</button>
-  </div>
   }
-
-  <!-- Todo List -->
-  <div class="todo-list">
-    @if (isLoading()) {
-    <div class="loading">Loading todos...</div>
-    } @else if (filteredTodos().length === 0) {
-    <div class="empty-state">
-      @if (todos().length === 0) {
-      <p>No todos yet. Create your first todo above!</p>
-      } @else {
-      <p>No todos match the current filter.</p>
-      }
-    </div>
-    } @else {
-    @for (todo of filteredTodos(); track todo.id) {
-    <app-todo-item [todo]="todo" (todoUpdated)="onTodoUpdated($event)" (todoDeleted)="onTodoDeleted($event)"
-      (subtaskAdded)="onSubtaskAdded($event.todoId, $event.subtask)"
-      (subtaskUpdated)="onSubtaskUpdated($event.todoId, $event.subtaskId, $event.updates)"
-      (subtaskDeleted)="onSubtaskDeleted($event.todoId, $event.subtaskId)" />
-    }
-    }
-  </div>
 </div>
