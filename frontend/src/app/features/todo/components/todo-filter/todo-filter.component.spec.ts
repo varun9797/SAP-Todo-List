@@ -14,6 +14,13 @@ describe('TodoFilterComponent', () => {
 
     fixture = TestBed.createComponent(TodoFilterComponent);
     component = fixture.componentInstance;
+    
+    // Set required inputs
+    fixture.componentRef.setInput('todos', []);
+    fixture.componentRef.setInput('pendingCount', 0);
+    fixture.componentRef.setInput('inProgressCount', 0);
+    fixture.componentRef.setInput('completedCount', 0);
+    
     fixture.detectChanges();
   });
 

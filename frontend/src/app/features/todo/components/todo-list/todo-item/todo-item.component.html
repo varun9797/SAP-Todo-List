@@ -74,8 +74,7 @@
     @if (todo.subtasks.length > 0) {
     <div class="subtasks-list">
       @for (subtask of todo.subtasks; track subtask.id) {
-      <app-subtask [subtask]="subtask" [todoId]="todo.id" (subtaskUpdated)="onSubtaskUpdated($event)"
-        (subtaskDeleted)="onSubtaskDeleted($event)">
+      <app-subtask [subtask]="subtask" [todoId]="todo.id">
       </app-subtask>
       }
     </div>

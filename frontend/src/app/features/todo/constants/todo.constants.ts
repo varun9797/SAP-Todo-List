@@ -47,6 +47,8 @@ export const SUCCESS_MESSAGES = {
 export const ERROR_MESSAGES = {
     LOAD_TODOS_FAILED: 'Failed to load todos. Please try again.',
     CREATE_TODO_FAILED: 'Failed to create todo. Please try again.',
+    UPDATE_TODO_FAILED: 'Failed to update todo. Please try again.',
+    DELETE_TODO_FAILED: 'Failed to delete todo. Please try again.',
     ADD_SUBTASK_FAILED: 'Failed to add subtask. Please try again.',
     UPDATE_SUBTASK_FAILED: 'Failed to update subtask. Please try again.',
     DELETE_SUBTASK_FAILED: 'Failed to delete subtask. Please try again.'

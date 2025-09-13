@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Todo, CreateSubTaskRequest, SubTask } from '../../../models/todo.types';
+import { Todo, CreateSubTaskRequest } from '../../../models/todo.types';
 import { TODO_STATUS, TODO_STATUS_LABELS } from '../../../constants/todo.constants';
 import { SubtaskComponent } from '../subtask/subtask.component';
 import { ButtonComponent } from '../../../../../shared/components/button/button.component';
+import { TodoStore } from '../../../store/todo.store';
 
 @Component({
   selector: 'app-todo-item',
@@ -15,11 +16,6 @@ import { ButtonComponent } from '../../../../../shared/components/button/button.
 })
 export class TodoItemComponent {
   @Input({ required: true }) todo!: Todo;
-  @Output() todoUpdated = new EventEmitter<Todo>();
-  @Output() todoDeleted = new EventEmitter<string>();
-  @Output() subtaskAdded = new EventEmitter<{ todoId: string; subtask: CreateSubTaskRequest }>();
-  @Output() subtaskUpdated = new EventEmitter<{ todoId: string; subtaskId: string; updates: Partial<SubTask> }>();
-  @Output() subtaskDeleted = new EventEmitter<{ todoId: string; subtaskId: string }>();
 
   // Signals for component state
   isEditing = signal(false);
@@ -35,7 +31,10 @@ export class TodoItemComponent {
   editForm: FormGroup;
   subtaskForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private todoStore: TodoStore
+  ) {
     this.editForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],
@@ -66,13 +65,13 @@ export class TodoItemComponent {
 
     const formValue = this.editForm.value;
     const updatedTodo = { ...this.todo, ...formValue };
-    this.todoUpdated.emit(updatedTodo);
-    this.isEditing.set(false);
+    this.todoStore.updateTodo(updatedTodo.id, formValue).then(() => {
+      this.isEditing.set(false);
+    });
   }
 
   deleteTodo(): void {
-    if (!confirm('Are you sure you want to delete this todo?')) return;
-    this.todoDeleted.emit(this.todo.id);
+    this.todoStore.deleteTodo(this.todo.id);
   }
 
   toggleSubtaskForm(): void {
@@ -88,18 +87,10 @@ export class TodoItemComponent {
     const formValue = this.subtaskForm.value;
     const request: CreateSubTaskRequest = { title: formValue.title.trim() };
 
-    // Emit the request, parent component will handle API call and return the created subtask
-    this.subtaskAdded.emit({ todoId: this.todo.id, subtask: request });
-    this.subtaskForm.reset();
-    this.showSubtaskForm.set(false);
-  }
-
-  onSubtaskUpdated(event: { todoId: string; subtaskId: string; updates: Partial<SubTask> }): void {
-    this.subtaskUpdated.emit(event);
-  }
-
-  onSubtaskDeleted(event: { todoId: string; subtaskId: string }): void {
-    this.subtaskDeleted.emit(event);
+    this.todoStore.createSubtask(this.todo.id, request).then(() => {
+      this.subtaskForm.reset();
+      this.showSubtaskForm.set(false);
+    });
   }
 
   getStatusLabel(status: string): string {

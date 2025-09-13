@@ -8,9 +8,7 @@
   </div>
   } @else {
   @for (todo of todos; track todo.id) {
-  <app-todo-item [todo]="todo" (todoUpdated)="onTodoUpdated($event)" (todoDeleted)="onTodoDeleted($event)"
-    (subtaskAdded)="onSubtaskAdded($event)" (subtaskUpdated)="onSubtaskUpdated($event)"
-    (subtaskDeleted)="onSubtaskDeleted($event)" />
+  <app-todo-item [todo]="todo" />
   }
   }
 </div>

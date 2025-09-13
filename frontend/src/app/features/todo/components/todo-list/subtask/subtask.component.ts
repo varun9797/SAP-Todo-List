@@ -1,9 +1,9 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { SubTask } from '../../../models/todo.types';
-import { TodoService } from '../../../services/todo.service';
 import { ButtonComponent } from '../../../../../shared/components/button/button.component';
+import { TodoStore } from '../../../store/todo.store';
 
 @Component({
     selector: 'app-subtask',
@@ -15,20 +15,18 @@ import { ButtonComponent } from '../../../../../shared/components/button/button.
 export class SubtaskComponent {
     @Input({ required: true }) subtask!: SubTask;
     @Input({ required: true }) todoId!: string;
-    @Output() subtaskUpdated = new EventEmitter<{ todoId: string; subtaskId: string; updates: Partial<SubTask> }>();
-    @Output() subtaskDeleted = new EventEmitter<{ todoId: string; subtaskId: string }>();
 
     // Signals for component state
     isEditing = signal(false);
-    isSaving = signal(false);
     isDeleting = signal(false);
+    isSaving = signal(false);
 
     // Reactive Form
     editForm: FormGroup;
 
     constructor(
         private fb: FormBuilder,
-        private todoService: TodoService
+        private todoStore: TodoStore
     ) {
         this.editForm = this.fb.group({
             title: ['', Validators.required]
@@ -52,54 +50,26 @@ export class SubtaskComponent {
         const formValue = this.editForm.value;
         const updates: Partial<SubTask> = { title: formValue.title.trim() };
 
-        this.todoService.updateSubTask(this.todoId, this.subtask.id, updates).subscribe({
-            next: () => {
-                this.subtaskUpdated.emit({
-                    todoId: this.todoId,
-                    subtaskId: this.subtask.id,
-                    updates
-                });
-                this.isEditing.set(false);
-                this.isSaving.set(false);
-                this.editForm.reset();
-            },
-            error: (_err: Error) => {
-                this.isSaving.set(false);
-            }
+        this.todoStore.updateSubtask(this.todoId, this.subtask.id, updates).then(() => {
+            this.isEditing.set(false);
+            this.editForm.reset();
+            this.isSaving.set(false);
+        }).catch(() => {
+            this.isSaving.set(false);
         });
     }
 
     toggleCompletion(): void {
         const updates: Partial<SubTask> = { completed: !this.subtask.completed };
-
-        this.todoService.updateSubTask(this.todoId, this.subtask.id, updates).subscribe({
-            next: () => {
-                this.subtaskUpdated.emit({
-                    todoId: this.todoId,
-                    subtaskId: this.subtask.id,
-                    updates
-                });
-            },
-            error: (_err: Error) => {
-                // Error handling could be added here if needed
-            }
-        });
+        this.todoStore.updateSubtask(this.todoId, this.subtask.id, updates);
     }
 
     deleteSubtask(): void {
-        if (!confirm('Are you sure you want to delete this subtask?')) return;
-
         this.isDeleting.set(true);
-        this.todoService.deleteSubTask(this.todoId, this.subtask.id).subscribe({
-            next: () => {
-                this.subtaskDeleted.emit({
-                    todoId: this.todoId,
-                    subtaskId: this.subtask.id
-                });
-            },
-            error: (_err: Error) => {
-                this.isDeleting.set(false);
-            }
+        this.todoStore.deleteSubtask(this.todoId, this.subtask.id).then(() => {
+            this.isDeleting.set(false);
+        }).catch(() => {
+            this.isDeleting.set(false);
         });
     }
 

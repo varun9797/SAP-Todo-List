@@ -2,33 +2,16 @@
     <header class="header">
         <h1>Todo Management</h1>
         <p class="subtitle">Organize your tasks efficiently</p>
-
-        <!-- Test notification buttons -->
-        <div class="test-buttons" style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-            <h4>Test Notifications:</h4>
-            <app-button variant="success" size="sm" (clicked)="testSuccess()" style="margin-right: 0.5rem;">
-                Test Success
-            </app-button>
-            <app-button variant="danger" size="sm" (clicked)="testError()" style="margin-right: 0.5rem;">
-                Test Error
-            </app-button>
-            <app-button variant="warning" size="sm" (clicked)="testConfirmation()">
-                Test Confirmation
-            </app-button>
-        </div>
     </header>
 
     <app-todo-form></app-todo-form>
 
     <!-- Filter Component -->
-    <app-todo-filter [todos]="todos()" [pendingCount]="pendingCount()" [inProgressCount]="inProgressCount()"
-        [completedCount]="completedCount()" (filterChanged)="onFilterChange($event)">
+    <app-todo-filter [todos]="todos()" [pendingCount]="counts().pending" [inProgressCount]="counts().inProgress"
+        [completedCount]="counts().completed" (filterChanged)="onFilterChange($event)">
     </app-todo-filter>
 
-    <app-todo-list [todos]="filteredTodos()" [isLoading]="isLoading()" (todoUpdated)="onTodoUpdated($event)"
-        (todoDeleted)="onTodoDeleted($event)" (subtaskAdded)="onSubtaskAdded($event.todoId, $event.subtask)"
-        (subtaskUpdated)="onSubtaskUpdated($event.todoId, $event.subtaskId, $event.updates)"
-        (subtaskDeleted)="onSubtaskDeleted($event.todoId, $event.subtaskId)">
+    <app-todo-list [todos]="filteredTodos()" [isLoading]="isLoading()">
     </app-todo-list>
 </div>
 

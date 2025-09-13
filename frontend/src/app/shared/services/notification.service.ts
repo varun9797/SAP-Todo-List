@@ -25,14 +25,14 @@ export class NotificationService {
     /**
      * Show a success notification
      */
-  showSuccess(message: string, title?: string, duration?: number): void {
-    this.show({
-      type: 'success',
-      title,
-      message,
-      duration: duration ?? this.defaultDurations.success
-    });
-  }    /**
+    showSuccess(message: string, title?: string, duration?: number): void {
+        this.show({
+            type: 'success',
+            title,
+            message,
+            duration: duration ?? this.defaultDurations.success
+        });
+    }    /**
      * Show an error notification
      */
     showError(message: string, title?: string, duration?: number): void {
@@ -130,9 +130,9 @@ export class NotificationService {
     /**
      * Show a custom notification
      */
-  show(notification: ConfirmationData): void {
-    this.currentNotification.set(notification);
-  }    /**
+    show(notification: ConfirmationData): void {
+        this.currentNotification.set(notification);
+    }    /**
      * Hide the current notification
      */
     hide(): void {

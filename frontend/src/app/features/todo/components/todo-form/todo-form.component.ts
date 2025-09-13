@@ -1,10 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, Signal } from '@angular/core';
 import { TODO_STATUS } from '../../constants/todo.constants';
-import { TodoService } from '../../services/todo.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { SharedService } from '../../services/shared.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { TodoStore } from '../../store/todo.store';
 
 
 @Component({
@@ -14,7 +13,6 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
   styleUrl: './todo-form.component.scss'
 })
 export class TodoFormComponent {
-  isLoading = signal(false);
   todoForm: FormGroup;
 
   TODO_STATUS_OPTIONS = [
@@ -24,8 +22,7 @@ export class TodoFormComponent {
   ];
 
   constructor(
-    private todoService: TodoService,
-    private sharedService: SharedService,
+    private todoStore: TodoStore,
     private fb: FormBuilder
   ) {
     this.todoForm = this.fb.group({
@@ -35,21 +32,15 @@ export class TodoFormComponent {
     });
   }
 
-  addTodo() {
+  get isLoading(): Signal<boolean> {
+    return this.todoStore.loading;
+  }
+
+  addTodo(): void {
     if (this.todoForm.invalid) return;
 
-    this.isLoading.set(true);
-
-    this.todoService.createTodo(this.todoForm.value).subscribe({
-      next: (newTodo) => {
-        this.sharedService.triggerAddItemToList(newTodo);
-        this.todoForm.reset({ status: TODO_STATUS.PENDING });
-        this.isLoading.set(false);
-      },
-      error: (_err) => {
-        this.sharedService.triggerErrorWhileAddingTodo(true);
-        this.isLoading.set(false);
-      }
+    this.todoStore.createTodo(this.todoForm.value).then(() => {
+      this.todoForm.reset({ status: TODO_STATUS.PENDING });
     });
   }
 }
