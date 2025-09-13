@@ -40,7 +40,7 @@ export class TodoFormComponent {
     if (this.todoForm.invalid) return;
 
     this.todoStore.createTodo(this.todoForm.value).then(() => {
-      this.todoForm.reset({ status: TODO_STATUS.PENDING });
+      this.todoForm.reset({ status: TODO_STATUS.PENDING, description: '' });
     });
   }
 }
