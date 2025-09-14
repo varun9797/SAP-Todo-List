@@ -32,8 +32,9 @@ RUN apk add --no-cache \
     ca-certificates \
     ttf-freefont
 
-# Set Puppeteer to use installed Chromium
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Set Chrome binary path for Karma
+ENV CHROME_BIN=/usr/bin/chromium-browser
+ENV DISPLAY=:99
 
 # Copy build arguments
 ARG SKIP_TESTS
@@ -62,7 +63,7 @@ RUN if [ "$SKIP_LINT" != "true" ]; then \
 # Run tests
 RUN if [ "$SKIP_TESTS" != "true" ]; then \
         echo "🔍 Running tests..." && \
-        npm run test -- --watch=false --browsers=ChromiumHeadless || \
+        npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox || \
         (echo "❌ Tests failed!" && exit 1); \
     else \
         echo "⏭️ Skipping tests"; \

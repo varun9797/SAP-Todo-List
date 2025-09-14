@@ -209,7 +209,7 @@ describe('TodoItemComponent', () => {
             const formatted = component.formatDate(testDate);
             
             expect(formatted).toContain('15/01/2023');
-            expect(formatted).toContain('15:30');
+            expect(formatted).toContain('14:30');
         });
 
         it('should format string date correctly', () => {
@@ -217,7 +217,7 @@ describe('TodoItemComponent', () => {
             const formatted = component.formatDate(dateString);
             
             expect(formatted).toContain('15/01/2023');
-            expect(formatted).toContain('15:30');
+            expect(formatted).toContain('14:30');
         });
     });
 

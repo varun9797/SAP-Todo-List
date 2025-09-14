@@ -36,11 +36,17 @@ export class TodoFormComponent {
     return this.todoStore.loading;
   }
 
-  addTodo(): void {
+  async addTodo(): Promise<void> {
     if (this.todoForm.invalid) return;
 
-    this.todoStore.createTodo(this.todoForm.value).then(() => {
+    try {
+      await this.todoStore.createTodo(this.todoForm.value);
       this.todoForm.reset({ status: TODO_STATUS.PENDING, description: '' });
-    });
+    } catch (error) {
+      // Handle error - keep form state for user to retry
+      console.error('Failed to create todo:', error);
+      // Re-throw for tests to catch
+      throw error;
+    }
   }
 }
