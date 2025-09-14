@@ -5,12 +5,12 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #e9ecef;
   transition: all 0.2s;
-  
+
   &:hover {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
   }
-  
+
   &.completed {
     opacity: 0.8;
     border-color: #28a745;
@@ -27,6 +27,8 @@
 
 .todo-main {
   flex: 1;
+  display: flex;
+  justify-content: space-between;
 }
 
 .todo-content {
@@ -36,45 +38,45 @@
     color: #2c3e50;
     margin: 0 0 0.5rem 0;
   }
-  
+
   .todo-description {
     color: #6c757d;
     margin: 0 0 1rem 0;
     line-height: 1.5;
   }
-  
+
   .todo-meta {
     display: flex;
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
   }
-  
+
   .status-badge {
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 600;
-    
+
     &.status-pending {
       background: #fff3cd;
       color: #856404;
       border: 1px solid #ffeaa7;
     }
-    
+
     &.status-in-progress {
       background: #cce5ff;
       color: #004085;
       border: 1px solid #99d3ff;
     }
-    
+
     &.status-completed {
       background: #d1edff;
       color: #155724;
       border: 1px solid #b3d4fc;
     }
   }
-  
+
   .date {
     color: #6c757d;
     font-size: 0.875rem;
@@ -84,27 +86,27 @@
 .edit-form {
   display: grid;
   gap: 1rem;
-  
+
   .edit-input {
     padding: 0.5rem;
     border: 2px solid #e9ecef;
     border-radius: 6px;
     font-size: 1rem;
-    
+
     &:focus {
       outline: none;
       border-color: #007bff;
     }
-    
+
     &.title-input {
       font-weight: 600;
       font-size: 1.1rem;
     }
-    
+
     &.description-input {
       resize: vertical;
     }
-    
+
     &.status-select {
       max-width: 200px;
     }
@@ -127,7 +129,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-  
+
   h4 {
     margin: 0;
     color: #495057;
@@ -139,7 +141,7 @@
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  
+
   .form-control {
     flex: 1;
   }
@@ -155,7 +157,7 @@
   border-radius: 8px;
   padding: 1rem;
   border: 1px solid #e9ecef;
-  
+
   &.completed {
     opacity: 0.7;
     text-decoration: line-through;
@@ -185,7 +187,7 @@
 .subtask-title {
   flex: 1;
   color: #495057;
-  
+
   &.completed {
     text-decoration: line-through;
     color: #6c757d;
@@ -196,7 +198,7 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  
+
   .form-control {
     flex: 1;
   }
@@ -220,31 +222,31 @@
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .todo-actions {
     align-self: stretch;
   }
-  
+
   .subtasks-header {
     flex-direction: column;
     gap: 0.5rem;
     align-items: stretch;
   }
-  
+
   .add-subtask-form {
     flex-direction: column;
   }
-  
+
   .subtask-content {
     flex-direction: column;
     align-items: stretch;
     gap: 0.5rem;
   }
-  
+
   .subtask-main {
     order: 1;
   }
-  
+
   .subtask-actions {
     order: 2;
     justify-content: center;

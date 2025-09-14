@@ -12,6 +12,14 @@
           }
         </select>
       </form>
+      <div class="todo-actions">
+        <app-button variant="success" size="sm" [disabled]="editForm.invalid" (clicked)="saveTodo()">
+          Save
+        </app-button>
+        <app-button variant="secondary" size="sm" (clicked)="cancelEdit()">
+          Cancel
+        </app-button>
+      </div>
       } @else {
       <div class="todo-content">
         <h3 class="todo-title">{{ todo.title }}</h3>
@@ -28,24 +36,14 @@
           }
         </div>
       </div>
-      }
-    </div>
-
-    <div class="todo-actions">
-      @if (isEditing()) {
-      <app-button variant="success" size="sm" [disabled]="editForm.invalid" (clicked)="saveTodo()">
-        Save
-      </app-button>
-      <app-button variant="secondary" size="sm" (clicked)="cancelEdit()">
-        Cancel
-      </app-button>
-      } @else {
-      <app-button variant="primary" size="sm" (clicked)="startEdit()">
-        Edit
-      </app-button>
-      <app-button variant="danger" size="sm" (clicked)="deleteTodo()">
-        Delete
-      </app-button>
+      <div class="todo-actions">
+        <app-button variant="primary" size="sm" (clicked)="startEdit()">
+          Edit
+        </app-button>
+        <app-button variant="danger" size="sm" (clicked)="deleteTodo()">
+          Delete
+        </app-button>
+      </div>
       }
     </div>
   </div>
