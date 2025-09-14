@@ -5,14 +5,8 @@
     </header>
 
     <app-todo-form></app-todo-form>
-
-    <!-- Filter Component -->
-    <app-todo-filter [todos]="todos()" [pendingCount]="counts().pending" [inProgressCount]="counts().inProgress"
-        [completedCount]="counts().completed" (filterChanged)="onFilterChange($event)">
-    </app-todo-filter>
-
-    <app-todo-list [todos]="filteredTodos()" [isLoading]="isLoading()">
-    </app-todo-list>
+    <app-todo-filter></app-todo-filter>
+    <app-todo-list></app-todo-list>
 </div>
 
 <!-- Global notification component - placed outside container for proper z-index -->

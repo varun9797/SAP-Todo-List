@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Output, Input, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TODO_STATUS, FilterStatus } from '../../constants/todo.constants';
-import { Todo } from '../../models/todo.types';
+import { TodoStore } from '../../store/todo.store';
 
 @Component({
   selector: 'app-todo-filter',
@@ -12,11 +12,9 @@ import { Todo } from '../../models/todo.types';
   styleUrl: './todo-filter.component.scss'
 })
 export class TodoFilterComponent {
-  @Input({ required: true }) todos!: Todo[];
-  @Input({ required: true }) pendingCount!: number;
-  @Input({ required: true }) inProgressCount!: number;
-  @Input({ required: true }) completedCount!: number;
-  @Output() filterChanged = new EventEmitter<FilterStatus>();
+  private readonly todoStore = inject(TodoStore);
+  readonly todos = this.todoStore.todos;
+  readonly counts = this.todoStore.counts;
 
   // Filter state
   filterStatus = signal<FilterStatus>(TODO_STATUS.ALL);
@@ -33,15 +31,6 @@ export class TodoFilterComponent {
   ];
 
   onFilterChange(): void {
-    this.filterChanged.emit(this.filterStatus());
-  }
-
-  setFilter(status: FilterStatus): void {
-    this.filterStatus.set(status);
-    this.onFilterChange();
-  }
-
-  getCurrentFilter(): FilterStatus {
-    return this.filterStatus();
+    this.todoStore.setFilter(this.filterStatus());
   }
 }

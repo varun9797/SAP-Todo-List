@@ -1,5 +1,6 @@
 <div class="subtask-item">
-    <div class="subtask-content" *ngIf="!isEditing()">
+    @if (!isEditing()) {
+    <div class="subtask-content">
         <div class="subtask-header">
             <input type="checkbox" [checked]="subtask.completed" (change)="toggleCompletion()" class="subtask-checkbox">
             <span class="subtask-title" [class.completed]="subtask.completed">
@@ -11,9 +12,11 @@
             <small class="subtask-date">
                 Created: {{ formatDate(subtask.createdAt) }}
             </small>
-            <small class="subtask-date" *ngIf="subtask.updatedAt">
+            @if (subtask.updatedAt) {
+            <small class="subtask-date">
                 Updated: {{ formatDate(subtask.updatedAt) }}
             </small>
+            }
         </div>
 
         <div class="subtask-actions">
@@ -26,14 +29,18 @@
             </app-button>
         </div>
     </div>
+    }
 
-    <div class="subtask-edit-form" *ngIf="isEditing()">
+    @if (isEditing()) {
+    <div class="subtask-edit-form">
         <form [formGroup]="editForm" (ngSubmit)="saveSubtask()">
             <div class="form-group">
                 <input type="text" class="form-control" formControlName="title" placeholder="Subtask title" required>
-                <div class="invalid-feedback" *ngIf="editForm.get('title')?.invalid && editForm.get('title')?.touched">
+                @if (editForm.get('title')?.invalid && editForm.get('title')?.touched) {
+                <div class="invalid-feedback">
                     Title is required
                 </div>
+                }
             </div>
 
             <div class="form-actions">
@@ -47,4 +54,5 @@
             </div>
         </form>
     </div>
+    }
 </div>

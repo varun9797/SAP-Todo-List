@@ -40,6 +40,7 @@ export class TodoStore {
             completed: allTodos.filter(todo => todo.status === TODO_STATUS.COMPLETED).length,
             total: allTodos.length
         };
+
     });
 
     // Actions

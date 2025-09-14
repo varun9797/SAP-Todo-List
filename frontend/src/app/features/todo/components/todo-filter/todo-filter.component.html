@@ -11,9 +11,9 @@
     </div>
 
     <div class="stats">
-        <span class="stat">Total: {{ todos.length }}</span>
-        <span class="stat">Pending: {{ pendingCount }}</span>
-        <span class="stat">In Progress: {{ inProgressCount }}</span>
-        <span class="stat">Completed: {{ completedCount }}</span>
+        <span class="stat">Total: {{ todos().length }}</span>
+        <span class="stat">Pending: {{ counts().pending }}</span>
+        <span class="stat">In Progress: {{ counts().inProgress }}</span>
+        <span class="stat">Completed: {{ counts().completed }}</span>
     </div>
 </div>

@@ -1,13 +1,13 @@
 <!-- Todo List -->
 <div class="todo-list">
-  @if (isLoading) {
+  @if (isLoading()) {
   <div class="loading">Loading todos...</div>
-  } @else if (todos.length === 0) {
+  } @else if (todos().length === 0) {
   <div class="empty-state">
     <p>No todos to display.</p>
   </div>
   } @else {
-  @for (todo of todos; track todo.id) {
+  @for (todo of todos(); track todo.id) {
   <app-todo-item [todo]="todo" />
   }
   }

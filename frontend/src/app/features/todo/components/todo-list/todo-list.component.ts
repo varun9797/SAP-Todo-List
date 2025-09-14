@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TodoItemComponent } from './todo-item/todo-item.component';
-import { Todo } from '../../models/todo.types';
+
+import { TodoStore } from '../../store/todo.store';
 
 @Component({
   selector: 'app-todo-list',
@@ -10,7 +11,14 @@ import { Todo } from '../../models/todo.types';
   templateUrl: './todo-list.component.html',
   styleUrl: './todo-list.component.scss'
 })
-export class TodoListComponent {
-  @Input({ required: true }) todos!: Todo[];
-  @Input({ required: true }) isLoading!: boolean;
+export class TodoListComponent implements OnInit {
+  private readonly todoStore = inject(TodoStore);
+  readonly todos = this.todoStore.filteredTodos;
+  readonly isLoading = this.todoStore.loading;
+  readonly filteredTodos = this.todoStore.filteredTodos;
+
+
+  ngOnInit(): void {
+    this.todoStore.loadTodos();
+  }
 }
