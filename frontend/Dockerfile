@@ -18,12 +18,12 @@ FROM base AS quality-checks
 
 # Install Chrome for testing (required for Karma)
 RUN apk add --no-cache \
+    ca-certificates \
     chromium \
-    nss \
     freetype \
     freetype-dev \
     harfbuzz \
-    ca-certificates \
+    nss \
     ttf-freefont
 
 # Set Chrome binary path for Karma
@@ -66,7 +66,7 @@ COPY --from=builder /app/dist/frontend/browser /usr/share/nginx/html
 # Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Create nginx.conf that doesn't specify user (for non-root execution)
+# Configure nginx and set up directories and permissions in a single layer
 RUN echo 'events { worker_connections 1024; }' > /etc/nginx/nginx.conf && \
     echo 'http {' >> /etc/nginx/nginx.conf && \
     echo '    include /etc/nginx/mime.types;' >> /etc/nginx/nginx.conf && \
@@ -74,10 +74,8 @@ RUN echo 'events { worker_connections 1024; }' > /etc/nginx/nginx.conf && \
     echo '    sendfile on;' >> /etc/nginx/nginx.conf && \
     echo '    keepalive_timeout 65;' >> /etc/nginx/nginx.conf && \
     echo '    include /etc/nginx/conf.d/*.conf;' >> /etc/nginx/nginx.conf && \
-    echo '}' >> /etc/nginx/nginx.conf
-
-# Create necessary directories and set permissions
-RUN mkdir -p /var/cache/nginx/client_temp && \
+    echo '}' >> /etc/nginx/nginx.conf && \
+    mkdir -p /var/cache/nginx/client_temp && \
     mkdir -p /var/cache/nginx/proxy_temp && \
     mkdir -p /var/cache/nginx/fastcgi_temp && \
     mkdir -p /var/cache/nginx/uwsgi_temp && \

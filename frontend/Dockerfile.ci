@@ -24,12 +24,12 @@ FROM base AS quality-checks-ci
 
 # Install Chrome for testing (required for Karma)
 RUN apk add --no-cache \
+    ca-certificates \
     chromium \
-    nss \
     freetype \
     freetype-dev \
     harfbuzz \
-    ca-certificates \
+    nss \
     ttf-freefont
 
 # Set Chrome binary path for Karma

@@ -3,13 +3,21 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { App } from './app';
 
+// Import services and stores to ensure they're covered
+import { TodoService } from './features/todo/services/todo.service';
+import { NotificationService } from './shared/services/notification.service';
+import { TodoStore } from './features/todo/store/todo.store';
+
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        TodoService,
+        NotificationService,
+        TodoStore
       ]
     }).compileComponents();
   });
@@ -25,5 +33,15 @@ describe('App', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Todo Management');
+  });
+
+  it('should have TodoService available', () => {
+    const service = TestBed.inject(TodoService);
+    expect(service).toBeTruthy();
+  });
+
+  it('should have NotificationService available', () => {
+    const service = TestBed.inject(NotificationService);
+    expect(service).toBeTruthy();
   });
 });

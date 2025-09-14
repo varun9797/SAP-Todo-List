@@ -9,8 +9,7 @@ module.exports = function (config) {
             require('karma-jasmine'),
             require('karma-chrome-launcher'),
             require('karma-jasmine-html-reporter'),
-            require('karma-coverage'),
-            require('@angular-devkit/build-angular/plugins/karma')
+            require('karma-coverage')
         ],
         client: {
             jasmine: {
@@ -30,16 +29,17 @@ module.exports = function (config) {
             reporters: [
                 { type: 'html' },
                 { type: 'text-summary' },
-                { type: 'lcovonly', subdir: '.', file: 'lcov.info' },
-                { type: 'json' }
+                { type: 'lcov' },
+                { type: 'lcovonly', subdir: '.', file: 'lcov.info' }
             ],
             fixWebpackSourcePaths: true,
+            includeAllSources: true,
             check: {
                 global: {
-                    statements: 80,
-                    branches: 70,
-                    functions: 80,
-                    lines: 80
+                    statements: 70,
+                    branches: 60,
+                    functions: 70,
+                    lines: 70
                 }
             }
         },

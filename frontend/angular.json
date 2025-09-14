@@ -89,6 +89,14 @@
             ],
             "styles": [
               "src/styles.scss"
+            ],
+            "codeCoverage": true,
+            "codeCoverageExclude": [
+              "src/**/*.spec.ts",
+              "src/**/*.mock.ts",
+              "src/test.ts",
+              "src/environments/**",
+              "src/main.ts"
             ]
           }
         },
